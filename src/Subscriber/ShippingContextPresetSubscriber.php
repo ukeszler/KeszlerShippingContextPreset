@@ -14,7 +14,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class MySubscriber implements EventSubscriberInterface
+class ShippingContextPresetSubscriber implements EventSubscriberInterface
 {
     private const DEFAULT_ZIP = '00000';
     private const DEFAULT_COUNTRY_ISO = 'DE';

@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="KeszlerShippingContextPreset\Subscriber\MySubscriber" public="false" autowire="true" autoconfigure="true">
+        <service id="KeszlerShippingContextPreset\Subscriber\ShippingContextPresetSubscriber" public="false" autowire="true" autoconfigure="true">
             <argument type="service" id="country.repository"/>
             <argument type="service" id="request_stack"/>
             <tag name="kernel.event_subscriber"/>

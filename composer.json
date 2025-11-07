@@ -18,10 +18,5 @@
         "psr-4": {
             "KeszlerShippingContextPreset\\": "src/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "KeszlerShippingContextPreset\\Tests\\": "tests/"
-        }
     }
 }
