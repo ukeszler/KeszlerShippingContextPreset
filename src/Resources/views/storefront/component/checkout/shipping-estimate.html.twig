@@ -1,0 +1,75 @@
+{% block keszler_shipping_estimate %}
+    <div class="col-md-7 cart-shipping-costs-container keszler-shipping-estimate">
+        <legend class="card-title">Versandkosten berechnen</legend>
+        <p class="login-form-description">
+            Berechnen Sie die Versandkosten Ihres Warenkorbs anhand von Postleitzahl und Land.
+        </p>
+        <form class="keszler-shipping-estimate__form" onsubmit="event.preventDefault(); return false;">
+            <div class="row g-1">
+                <label for="kesz-country" class="form-label">Land</label>
+                <select id="kesz-country" class="form-select form-group" name="countryIso" required>
+                    {% set currentIso = context.shippingLocation and context.shippingLocation.country ? context.shippingLocation.country.iso : null %}
+                    {% for country in page.countries.elements %}
+                        {% set iso = country.iso %}
+                        <option value="{{ iso }}" {% if iso == currentIso %}selected{% endif %}>
+                            {{ iso }} - {{ country.translated.name ?? country.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row g-1">
+                <label for="kesz-zip" class="form-label">Postleitzahl</label>
+                <input id="kesz-zip" class="form-control form-group" name="zipcode" type="text" placeholder="24796" required onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.closest('.keszler-shipping-estimate').querySelector('button[type=button]').click(); }">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="
+                (async () => {
+                    const wrap = this.closest('.keszler-shipping-estimate');
+                    const iso = wrap.querySelector('#kesz-country').value;
+                    const zip = wrap.querySelector('#kesz-zip').value;
+                    const resultEl = wrap.querySelector('[data-result]');
+                    
+                    // Validate zipcode: only 4-5 digits allowed
+                    if (!zip || !/^\d{4,5}$/.test(zip)) {
+                        if (resultEl) {
+                            resultEl.classList.add('text-danger');
+                            resultEl.textContent = 'Postleitzahl muss aus 4-5 Ziffern bestehen.';
+                        }
+                        return;
+                    }
+                    
+                    // Clear previous error messages
+                    if (resultEl) {
+                        resultEl.classList.remove('text-danger');
+                        resultEl.textContent = '';
+                    }
+                    
+                    const baseUrl = '{{ path('frontend.shipping.estimate') }}';
+                    const params = new URLSearchParams();
+                    params.set('countryIso', iso);
+                    params.set('zipcode', zip);
+                    const url = baseUrl + '?' + params.toString();
+
+                    try {
+                        const response = await fetch(url, { credentials: 'same-origin' });
+
+                        if (!response.ok) {
+                            throw new Error('Request failed');
+                        }
+                    } catch (error) {
+                        const resultEl = wrap.querySelector('[data-result]');
+                        if (resultEl) {
+                            resultEl.classList.add('text-danger');
+                            resultEl.textContent = '{{"KeszlerShippingContextPreset.shippingEstimate.error"|trans|e('js') }}';
+                        }
+
+                        return;
+                    }
+
+                    window.location.reload();
+                })();
+            ">Berechnen</button>
+        </form>
+        <div class="mt-2 small text-muted" data-result></div>
+        {# TODO Translated buttons and snippets would be nice, not just here #}
+    </div>
+{% endblock %}

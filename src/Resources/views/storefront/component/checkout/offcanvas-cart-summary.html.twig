@@ -1,0 +1,28 @@
+{% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart-summary.html.twig' %}
+
+{% block component_offcanvas_summary_content_info %}
+    {% if context.customer is not null %}
+        {# Show the default calculation whenever a customer is already logged in/registered #}
+        {{ parent() }}
+    {% else %}
+        <div class="row offcanvas-shipping-info">
+            <span class="shipping-label shipping-cost">
+                <strong>{{ 'checkout.summaryShipping'|trans|sw_sanitize }}</strong>{% if context.shippingLocation.address.zipcode != "00000" %} nach {{ context.shippingLocation.address.zipcode }}{% else %} <a href="{{ path('frontend.checkout.cart.page') }}" title="{{ 'checkout.proceedToCart'|trans|striptags }}">(geschätzt)</a>{% endif %}
+                {#% if loop.first %}
+                    {% if page.shippingMethods|length %}
+                        <button class="btn btn-sm btn-link js-toggle-shipping-selection">
+                            ({{ activeShipping.shippingMethod.translated.name }})
+                        </button>
+                    {% else %}
+                        <small>({{ activeShipping.shippingMethod.translated.name }})</small>
+                    {% endif %}
+                {% endif %#}
+            </span>
+
+            <span class="pb-2 shipping-value shipping-cost">
+                {% set shippingTotalPrice = activeShipping.shippingCosts.totalPrice ?? 0 %}
+                <strong>{{ shippingTotalPrice < 0 ? '&minus;' : '+' }} {{ shippingTotalPrice|abs|currency }}</strong>
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

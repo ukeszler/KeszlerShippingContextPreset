@@ -1,0 +1,17 @@
+{% sw_extends '@Storefront/storefront/page/checkout/summary/summary-shipping.html.twig' %}
+
+{% block page_checkout_summary_shipping_label %}
+    {% if context.customer is null %}
+        {% if context.shippingLocation.address.zipcode != "00000" %}
+            <dt class="col-7 checkout-aside-summary-label">
+                {{ 'checkout.summaryShipping'|trans|sw_sanitize }} nach {{ context.shippingLocation.address.zipcode }}
+            </dt>
+        {% elseif context.shippingLocation.address.zipcode == "00000" %}
+            <dt class="col-7 checkout-aside-summary-label">
+                Geschätzte {{ 'checkout.summaryShipping'|trans|sw_sanitize }}
+            </dt>
+        {% endif %}
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

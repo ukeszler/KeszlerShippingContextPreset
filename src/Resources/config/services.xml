@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="KeszlerShippingContextPreset\Subscriber\MySubscriber" public="false" autowire="true" autoconfigure="true">
+            <argument type="service" id="country.repository"/>
+            <argument type="service" id="request_stack"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="KeszlerShippingContextPreset\Controller\ShippingEstimateController" public="true" autowire="true" autoconfigure="true">
+            <tag name="controller.service_arguments"/>
+        </service>
+
+        <service id="KeszlerShippingContextPreset\Service\PerItemShippingCalculator" autowire="true" />
+        <service id="KeszlerShippingContextPreset\Twig\ShippingTwigExtension" autowire="true">
+            <tag name="twig.extension"/>
+        </service>
+        
+    </services>
+</container>

@@ -1,0 +1,14 @@
+{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
+
+{# Replace the default shipping costs container with our estimator UI #}
+{% block page_checkout_cart_shipping_costs %}
+    {% if context.customer is null %}
+        {# If the customer is not yet logged in/registered, show our estimator #}
+        {% sw_include '@KeszlerShippingContextPreset/storefront/component/checkout/shipping-estimate.html.twig' %}
+    {% endif %}
+{% endblock %}
+
+{# Fallback for older/newer block names: override common alternative #}
+{% block component_cart_shipping_costs %}
+    {% sw_include '@KeszlerShippingContextPreset/storefront/component/checkout/shipping-estimate.html.twig' %}
+{% endblock %}
