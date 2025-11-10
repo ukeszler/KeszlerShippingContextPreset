@@ -10,6 +10,7 @@
             <name>countryIso</name>
             <label>Country ISO (e.g. DE)</label>
             <helpText>Two-letter ISO code of the country.</helpText>
+            <defaultValue>DE</defaultValue>
         </input-field>
 
         <input-field type="text">
@@ -17,6 +18,7 @@
             <label>Zipcode</label>
             <placeholder>e.g. 10115</placeholder>
             <helpText>Optional zipcode to influence shipping rules.</helpText>
+            <defaultValue>24796</defaultValue>
         </input-field>
     </card>
 </config>
