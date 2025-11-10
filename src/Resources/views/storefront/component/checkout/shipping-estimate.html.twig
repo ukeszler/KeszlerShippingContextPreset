@@ -19,7 +19,7 @@
             </div>
             <div class="row g-1">
                 <label for="kesz-zip" class="form-label">Postleitzahl</label>
-                <input id="kesz-zip" class="form-control form-group" name="zipcode" type="text" placeholder="24796" required onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.closest('.keszler-shipping-estimate').querySelector('button[type=button]').click(); }">
+                <input id="kesz-zip" class="form-control form-group" name="zipcode" type="text" placeholder="{{ config('KeszlerShippingContextPreset.config.zipcodePlaceholder') }}" required onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.closest('.keszler-shipping-estimate').querySelector('button[type=button]').click(); }">
             </div>
             <button type="button" class="btn btn-primary" onclick="
                 (async () => {

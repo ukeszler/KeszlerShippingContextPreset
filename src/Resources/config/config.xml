@@ -21,5 +21,12 @@
             <helpText lang="de-DE">Postleitzahl zur Anwendung in perItemShipping-Funktion.</helpText>
             <defaultValue>24796</defaultValue>
         </input-field>
+
+        <input-field type="text">
+            <name>zipcodePlaceholder</name>
+            <label lang="de-DE">Postleitzahl-Platzhalter im Warenkorb</label>
+            <helpText lang="de-DE">Was als Platzhalter für das Postleitzahl-Feld im Warenkorb verwendet werden soll.</helpText>
+            <defaultValue>z.B. 24796</defaultValue>
+        </input-field>
     </card>
 </config>
