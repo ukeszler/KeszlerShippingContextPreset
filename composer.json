@@ -1,6 +1,6 @@
 {
     "name": "keszler-shipping-context-preset/keszler-shipping-context-preset",
-    "description": "Preset the storefront shipping context for guest estimations",
+    "description": "Preset the shipping context for guest estimations and product feeds",
     "type": "shopware-platform-plugin",
     "version": "1.0.0",
     "license": "MIT",
@@ -10,8 +10,8 @@
     "extra": {
         "shopware-plugin-class": "KeszlerShippingContextPreset\\KeszlerShippingContextPreset",
         "label": {
-            "de-DE": "Keszler Shipping Context Preset",
-            "en-GB": "Keszler Shipping Context Preset"
+            "de-DE": "Versandkontext-Voreinstellung für Gäste und Produktfeeds",
+            "en-GB": "Shipping context preset for guests and product feeds"
         }
     },
     "autoload": {
