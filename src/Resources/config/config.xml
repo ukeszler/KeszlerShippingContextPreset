@@ -4,20 +4,21 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
-        <title>Shipping Simulation</title>
+        <title>Settings</title>
+        <title lang="de-DE">Versandkontext-Voreinstellung</title>
 
         <input-field type="text">
             <name>countryIso</name>
-            <label>Country ISO (e.g. DE)</label>
-            <helpText>Two-letter ISO code of the country.</helpText>
+            <label lang="de-DE">Land ISO (e.g. DE)</label>
+            <helpText lang="de-DE">Zweibuchstabiger Lieferland ISO-Code zur Anwendung in perItemShipping-Funktion. Verfügbare Codes siehe Einstellungen -> Länder -> ISO2.</helpText>
             <defaultValue>DE</defaultValue>
         </input-field>
 
         <input-field type="text">
             <name>zipcode</name>
-            <label>Zipcode</label>
-            <placeholder>e.g. 10115</placeholder>
-            <helpText>Optional zipcode to influence shipping rules.</helpText>
+            <label lang="de-DE">Postleitzahl</label>
+            <placeholder lang="de-DE">z.B. 24796</placeholder>
+            <helpText lang="de-DE">Postleitzahl zur Anwendung in perItemShipping-Funktion.</helpText>
             <defaultValue>24796</defaultValue>
         </input-field>
     </card>
