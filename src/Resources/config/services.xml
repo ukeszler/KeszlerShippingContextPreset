@@ -15,7 +15,10 @@
             <tag name="controller.service_arguments"/>
         </service>
 
-        <service id="KeszlerShippingContextPreset\Service\PerItemShippingCalculator" autowire="true" />
+        <service id="KeszlerShippingContextPreset\Service\PerItemShippingCalculator" autowire="true">
+            <argument key="$countryRepository" type="service" id="country.repository"/>
+            <argument key="$shippingMethodRepository" type="service" id="shipping_method.repository"/>
+        </service>
         <service id="KeszlerShippingContextPreset\Twig\ShippingTwigExtension" autowire="true">
             <tag name="twig.extension"/>
         </service>
