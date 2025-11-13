@@ -37,8 +37,10 @@ class PerItemShippingCalculator
         $countryId = $this->config->get('KeszlerShippingContextPreset.config.countryId', $salesChannelId);
         /** @var string|null $countryIso */
         $countryIso = $this->config->get('KeszlerShippingContextPreset.config.countryIso', $salesChannelId);
-        /** @var string|null $zipcode */
-        $zipcode = $this->config->get('KeszlerShippingContextPreset.config.zipcode', $salesChannelId);
+        /** @var string|int|null $configuredZipcode */
+        $configuredZipcode = $this->config->get('KeszlerShippingContextPreset.config.zipcode', $salesChannelId);
+        $zipcode = $configuredZipcode !== null ? trim((string) $configuredZipcode) : null;
+        $zipcode = $zipcode === '' ? null : $zipcode;
         
         if (!$countryId && !$countryIso) {
             return null;
