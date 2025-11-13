@@ -94,7 +94,6 @@ class PerItemShippingCalculator
             SalesChannelContextService::LANGUAGE_ID => $baseContext->getLanguageId(),
             SalesChannelContextService::PAYMENT_METHOD_ID => $baseContext->getPaymentMethod()->getId(),
             SalesChannelContextService::COUNTRY_ID => $country->getId(),
-            //SalesChannelContextService::SHIPPING_METHOD_ID => $baseContext->getShippingMethod()->getId(),
         ];
 
         $calcContext = $this->contextFactory->create($token, $salesChannelId, $options);
@@ -106,7 +105,6 @@ class PerItemShippingCalculator
         $lineItem->setStackable(true);
         $lineItem->setRemovable(false);
 
-        $cart->add($lineItem);
         $cart->add($lineItem);
 
         $cart = $this->cartService->recalculate($cart, $calcContext);
