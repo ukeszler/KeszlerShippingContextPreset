@@ -17,8 +17,8 @@
         <input-field type="text">
             <name>zipcode</name>
             <label lang="de-DE">Postleitzahl</label>
-            <placeholder lang="de-DE">z.B. 24796</placeholder>
-            <helpText lang="de-DE">Postleitzahl zur Anwendung in perItemShipping-Funktion.</helpText>
+            <placeholder lang="de-DE">4-5 stellige Postleitzahl</placeholder>
+            <helpText lang="de-DE">Postleitzahl zur Anwendung in perItemShipping-Funktion, 4-5 stellig.</helpText>
             <defaultValue>24796</defaultValue>
         </input-field>
 
