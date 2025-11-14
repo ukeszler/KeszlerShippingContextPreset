@@ -12,21 +12,3 @@
 {% block component_cart_shipping_costs %}
     {% sw_include '@KeszlerShippingContextPreset/storefront/component/checkout/shipping-estimate.html.twig' %}
 {% endblock %}
-
-{# Disable begin-checkout button until a shipping method is available #}
-{% block page_checkout_cart_action_proceed %}
-    {% set shippingAvailable = false %}
-    {% for shippingMethod in page.shippingMethods.elements %}
-        {% if shippingMethod.active is true %}
-            {% set shippingAvailable = true %}
-        {% endif %}
-    {% endfor %}
-
-    <div class="checkout-aside-action d-grid">
-        <a href="{{ path('frontend.checkout.confirm.page') }}"
-            class="btn btn-primary btn-lg begin-checkout-btn{% if not shippingAvailable %} btn-light disabled{% endif %}"
-            title="{{ 'checkout.proceedLink'|trans|striptags }}">
-            {{ 'checkout.proceedLink'|trans|sw_sanitize }}
-        </a>
-    </div>
-{% endblock %}
