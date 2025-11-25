@@ -16,9 +16,9 @@
 
         <input-field type="text">
             <name>zipcode</name>
-            <label lang="de-DE">Postleitzahl</label>
+            <label lang="de-DE">perItemShipping-Postleitzahl</label>
             <placeholder lang="de-DE">4-5 stellige Postleitzahl</placeholder>
-            <helpText lang="de-DE">Postleitzahl zur Anwendung in perItemShipping-Funktion, 4-5 stellig.</helpText>
+            <helpText lang="de-DE">Postleitzahl die standardmäßig in perItemShipping-Funktion zur Anwendung kommt, wenn nicht im Feed angegeben. 4-5 stellig. </helpText>
             <defaultValue>24796</defaultValue>
         </input-field>
 

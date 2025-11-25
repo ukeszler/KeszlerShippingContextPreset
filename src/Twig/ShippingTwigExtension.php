@@ -29,8 +29,9 @@ class ShippingTwigExtension extends AbstractExtension
 
     /**
      * @param ProductEntity|array|string $product Product entity or id or array with ['id' => ..]
+     * @param string|null $zipcode Optional zipcode override for the shipping calculation
      */
-    public function perItemShipping($product, ?string $salesChannelId = null): ?float
+    public function perItemShipping($product, ?string $salesChannelId = null, ?string $zipcode = null): ?float
     {
         $prod = null;
         if ($product instanceof ProductEntity) {
@@ -54,7 +55,7 @@ class ShippingTwigExtension extends AbstractExtension
             return null;
         }
 
-        return $this->calculator->calculateForProduct($prod, $scContext);
+        return $this->calculator->calculateForProduct($prod, $scContext, $zipcode);
     }
 
     private function resolveSalesChannelContext(?string $salesChannelId): ?SalesChannelContext

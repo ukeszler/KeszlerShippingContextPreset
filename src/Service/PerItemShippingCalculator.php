@@ -38,10 +38,10 @@ class PerItemShippingCalculator
     ) {
     }
 
-    public function calculateForProduct(ProductEntity $product, SalesChannelContext $baseContext): ?float
+    public function calculateForProduct(ProductEntity $product, SalesChannelContext $baseContext, ?string $zipcodeOverride = null): ?float
     {
         $salesChannelId = $baseContext->getSalesChannelId();
-        $shippingTarget = $this->resolveShippingTarget($baseContext);
+        $shippingTarget = $this->resolveShippingTarget($baseContext, $zipcodeOverride);
         if ($shippingTarget === null) {
             return null;
         }
@@ -100,7 +100,7 @@ class PerItemShippingCalculator
     /**
      * @return array{country: CountryEntity, zipcode: string, cacheKey: string}|null
      */
-    private function resolveShippingTarget(SalesChannelContext $baseContext): ?array
+    private function resolveShippingTarget(SalesChannelContext $baseContext, ?string $zipcodeOverride = null): ?array
     {
         $salesChannelId = $baseContext->getSalesChannelId();
         /** @var string|null $countryId */
@@ -110,7 +110,10 @@ class PerItemShippingCalculator
         /** @var string|int|null $configuredZipcode */
         $configuredZipcode = $this->config->get('KeszlerShippingContextPreset.config.zipcode', $salesChannelId);
 
-        $zipcode = $configuredZipcode !== null ? trim((string) $configuredZipcode) : '';
+        $zipcode = $zipcodeOverride !== null ? trim($zipcodeOverride) : '';
+        if ($zipcode === '') {
+            $zipcode = $configuredZipcode !== null ? trim((string) $configuredZipcode) : '';
+        }
         $zipcode = $zipcode === '' ? self::DEFAULT_ZIP : $zipcode;
 
         $countryIso = $countryIso !== null ? strtoupper((string) $countryIso) : '';
