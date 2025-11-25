@@ -42,7 +42,8 @@ class PerItemShippingCalculator
         ProductEntity $product,
         SalesChannelContext $baseContext,
         ?string $zipcodeOverride = null,
-        bool $useWeightCache = false
+        bool $useWeightCache = false,
+        ?float $weightOverride = null
     ): ?float
     {
         $salesChannelId = $baseContext->getSalesChannelId();
@@ -51,12 +52,16 @@ class PerItemShippingCalculator
             return null;
         }
 
+        $weightKey = $weightOverride ?? $product->getWeight();
+        $effectiveWeight = $weightKey !== null ? (float) $weightKey : 0.0;
+        $normalizedWeight = number_format($effectiveWeight, 4, '.', '');
+
         $cacheKeyParts = $useWeightCache
             ? [
                 'weight',
                 $salesChannelId,
-                $shippingTarget['zipcode'],
-                (string) ($product->getWeight() ?? 0.0),
+                $shippingTarget['cacheKey'],
+                $normalizedWeight,
             ]
             : [
                 $product->getId(),
@@ -88,7 +93,7 @@ class PerItemShippingCalculator
         $lineItem = new LineItem($product->getId(), LineItem::PRODUCT_LINE_ITEM_TYPE, $product->getId(), 1);
         $lineItem->setStackable(true);
         $lineItem->setRemovable(false);
-        $this->enrichLineItem($lineItem, $product);
+        $this->enrichLineItem($lineItem, $product, $effectiveWeight);
 
         $cart->add($lineItem);
 
@@ -152,7 +157,7 @@ class PerItemShippingCalculator
         ];
     }
 
-    private function enrichLineItem(LineItem $lineItem, ProductEntity $product): void
+    private function enrichLineItem(LineItem $lineItem, ProductEntity $product, float $effectiveWeight): void
     {
         $name = $product->getTranslation('name') ?? $product->getName();
         if ($name) {
@@ -174,7 +179,7 @@ class PerItemShippingCalculator
         $lineItem->setDeliveryInformation(
             new DeliveryInformation(
                 $stock,
-                $product->getWeight(),
+                $effectiveWeight,
                 $product->getShippingFree() ?? false,
                 $product->getRestockTime(),
                 $deliveryTime,
