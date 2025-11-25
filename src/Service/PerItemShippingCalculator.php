@@ -38,7 +38,12 @@ class PerItemShippingCalculator
     ) {
     }
 
-    public function calculateForProduct(ProductEntity $product, SalesChannelContext $baseContext, ?string $zipcodeOverride = null): ?float
+    public function calculateForProduct(
+        ProductEntity $product,
+        SalesChannelContext $baseContext,
+        ?string $zipcodeOverride = null,
+        bool $useWeightCache = false
+    ): ?float
     {
         $salesChannelId = $baseContext->getSalesChannelId();
         $shippingTarget = $this->resolveShippingTarget($baseContext, $zipcodeOverride);
@@ -46,11 +51,19 @@ class PerItemShippingCalculator
             return null;
         }
 
-        $cacheKey = implode('|', [
-            $product->getId(),
-            $salesChannelId,
-            $shippingTarget['cacheKey'],
-        ]);
+        $cacheKeyParts = $useWeightCache
+            ? [
+                'weight',
+                $salesChannelId,
+                $shippingTarget['zipcode'],
+                (string) ($product->getWeight() ?? 0.0),
+            ]
+            : [
+                $product->getId(),
+                $salesChannelId,
+                $shippingTarget['cacheKey'],
+            ];
+        $cacheKey = implode('|', $cacheKeyParts);
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
