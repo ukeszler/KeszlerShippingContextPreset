@@ -4,8 +4,9 @@
 
 ## Why This Plugin Exists
 If you rely on somewhat detailed shipping cost calculations, a customer might be deterred by not seeing their actual shipping costs up front, as they would have to login or register as a guest or customer first. They could also be deterred by the costs varying from what they saw before they registered. To avoid this confusion and making it less complicated for a potential customer, this plugin allows them to simulate an address: Users can select a country (built from the sales channel active countries) and input a 4-5 digit zipcode, which is then used to built a new context to run the new calculations, as if the user were logged in.
+This plugin also adds the "perItemShipping" Twig function, which you can call in product streams / exports for merchant feeds.
 
-
+### Frontend usage
 Without any context (either given in a previous calculation or by the user being logged in), the offcanvas cart adds "(geschätzt)" to the shipping costs, which links to the main cart:
 
 <img width="394" height="808" alt="offcanvas" src="https://github.com/user-attachments/assets/1c7230e7-de7f-4cec-bcdc-250ceb544bd2" />
@@ -14,6 +15,11 @@ Without any context (either given in a previous calculation or by the user being
 After a user has entered a zipcode (and maybe changed the country), the shipping address context stays applied and calculates the actual shipping cost, noticable by the zipcode now always showing in the summary:
 
 <img width="1380" height="702" alt="cart" src="https://github.com/user-attachments/assets/962211c9-7451-4efc-a7d2-6dab4e2a2230" />
+
+### Usage in product feeds
+Let's say you want to create a product feed for some external product comparison service like Google Shopping. If you rely on weight & zipcode based shipping cost calculations, you can now have them calculated in the feed itself by calling the perItemShipping function. Args are the product id, weight, sales channel id (optional), zipcode (optional), useWeightCache flag (optional).
+You can set a global zipcode using the plugin settings, in which case perItemShipping will try and use it for running its calculation. You could also override it on a per-item basis, e.g. by iterating over a range of zipcodes and create multiple shipping info containers for a single product. 
+Trying to avoid issues with memory exhaustion and timeouts, you can set the useWeightCache flag. This will cache previous results based on weight and zipcode, so you don't have to rely on running the same calculations over and over again. Be mindful that this is only helpful if your custom rules don't take any product specifics into account. Otherwise the cache might lead to unexpected results.
 
 ## Disclaimer
 This plugin was originally created for internal use only, so it might be considered an oddly specific use case. However, if you rely on very detailed shipping cost calculations (such as zipcode & weight dependent freight forwarding), this plugin might be for you. 
