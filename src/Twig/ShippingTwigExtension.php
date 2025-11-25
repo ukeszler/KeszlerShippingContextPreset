@@ -29,16 +29,16 @@ class ShippingTwigExtension extends AbstractExtension
 
     /**
      * @param ProductEntity|array|string $product Product entity or id or array with ['id' => ..]
+     * @param float $weight Product weight (required, used for calculation and caching)
      * @param string|null $zipcode Optional zipcode override for the shipping calculation
      * @param bool $useWeightCache If true, reuse totals by weight/zipcode to speed up large feeds
-     * @param float|null $weight Optional explicit weight to avoid incomplete product data
      */
     public function perItemShipping(
         $product,
+        float $weight,
         ?string $salesChannelId = null,
         ?string $zipcode = null,
-        bool $useWeightCache = false,
-        ?float $weight = null
+        bool $useWeightCache = false
     ): ?float
     {
         $prod = null;
@@ -63,7 +63,7 @@ class ShippingTwigExtension extends AbstractExtension
             return null;
         }
 
-        return $this->calculator->calculateForProduct($prod, $scContext, $zipcode, $useWeightCache, $weight);
+        return $this->calculator->calculateForProduct($prod, $scContext, $weight, $zipcode, $useWeightCache);
     }
 
     private function resolveSalesChannelContext(?string $salesChannelId): ?SalesChannelContext

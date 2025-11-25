@@ -41,9 +41,9 @@ class PerItemShippingCalculator
     public function calculateForProduct(
         ProductEntity $product,
         SalesChannelContext $baseContext,
+        float $weight,
         ?string $zipcodeOverride = null,
-        bool $useWeightCache = false,
-        ?float $weightOverride = null
+        bool $useWeightCache = false
     ): ?float
     {
         $salesChannelId = $baseContext->getSalesChannelId();
@@ -52,9 +52,7 @@ class PerItemShippingCalculator
             return null;
         }
 
-        $weightKey = $weightOverride ?? $product->getWeight();
-        $effectiveWeight = $weightKey !== null ? (float) $weightKey : 0.0;
-        $normalizedWeight = number_format($effectiveWeight, 4, '.', '');
+        $normalizedWeight = number_format($weight, 4, '.', '');
 
         $cacheKeyParts = $useWeightCache
             ? [
@@ -93,7 +91,7 @@ class PerItemShippingCalculator
         $lineItem = new LineItem($product->getId(), LineItem::PRODUCT_LINE_ITEM_TYPE, $product->getId(), 1);
         $lineItem->setStackable(true);
         $lineItem->setRemovable(false);
-        $this->enrichLineItem($lineItem, $product, $effectiveWeight);
+        $this->enrichLineItem($lineItem, $product, $weight);
 
         $cart->add($lineItem);
 
