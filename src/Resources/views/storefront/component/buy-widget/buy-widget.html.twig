@@ -1,0 +1,28 @@
+{% sw_extends '@Storefront/storefront/component/buy-widget/buy-widget.html.twig' %}
+
+{# Adds schema.org/OfferShippingDetails to the product Offer microdata so Google Merchant listings
+   stop reporting the missing "shippingDetails" field. The shipping cost is calculated dynamically
+   per product (weight-aware) via the perItemShipping() Twig function, so it reflects the real rate
+   for our oil products from small bottles up to IBC containers. #}
+{% block buy_widget_data %}
+    {{ parent() }}
+
+    {# @deprecated tag:v6.8.0 - Offer microdata is replaced by JSON-LD (json-ld-product.html.twig) in
+       Shopware 6.8. When JSON_LD_DATA is enabled the offers itemscope no longer exists, so this block
+       must not emit orphan microdata. Migrate shippingDetails into the JSON-LD then. #}
+    {% if not feature('JSON_LD_DATA') %}
+        {% set kscpShippingCost = perItemShipping(product, product.weight ?? 0) %}
+        {% if kscpShippingCost is not null %}
+            {% set kscpShippingCountry = config('KeszlerShippingContextPreset.config.countryIso')|default('DE')|upper %}
+            <div itemprop="shippingDetails" itemscope itemtype="https://schema.org/OfferShippingDetails">
+                <div itemprop="shippingRate" itemscope itemtype="https://schema.org/MonetaryAmount">
+                    <meta itemprop="value" content="{{ kscpShippingCost|number_format(2, '.', '') }}">
+                    <meta itemprop="currency" content="{{ context.currency.isoCode }}">
+                </div>
+                <div itemprop="shippingDestination" itemscope itemtype="https://schema.org/DefinedRegion">
+                    <meta itemprop="addressCountry" content="{{ kscpShippingCountry }}">
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

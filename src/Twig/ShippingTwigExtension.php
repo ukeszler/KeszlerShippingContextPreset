@@ -63,7 +63,13 @@ class ShippingTwigExtension extends AbstractExtension
             return null;
         }
 
-        return $this->calculator->calculateForProduct($prod, $scContext, $weight, $zipcode, $useWeightCache);
+        // Never let a shipping calculation break the page it is rendered into (e.g. product detail
+        // structured data). On any failure we return null and the caller omits the shipping data.
+        try {
+            return $this->calculator->calculateForProduct($prod, $scContext, $weight, $zipcode, $useWeightCache);
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     private function resolveSalesChannelContext(?string $salesChannelId): ?SalesChannelContext
