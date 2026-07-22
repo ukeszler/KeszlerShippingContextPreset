@@ -1,0 +1,46 @@
+{% sw_extends '@Storefront/storefront/layout/structured-data/json-ld-product.html.twig' %}
+
+{#
+    JSON-LD counterpart of this plugin's buy-widget.html.twig shippingDetails microdata.
+
+    Adds the weight-aware shipping rate (perItemShipping) and destination country to the offer's
+    OfferShippingDetails. The core json-ld-product template may already populate shippingDetails with
+    a deliveryTime handling-time; we merge into that node rather than replace it, so the result carries
+    both the rate and the delivery time. If none exists (AggregateOffer / no deliveryTime) we create
+    a fresh OfferShippingDetails.
+
+    The offer lives at productData.offers for simple products and at productData.hasVariant[0].offers
+    for variant products (ProductGroup) — both shapes are handled below.
+#}
+{% block page_product_detail_json_ld_script %}
+    {% set kscpShippingCost = perItemShipping(page.product, page.product.weight ?? 0) %}
+    {% if kscpShippingCost is not null %}
+        {% set kscpCountry = config('KeszlerShippingContextPreset.config.countryIso')|default('DE')|upper %}
+        {% set kscpIsGroup = productData['@type'] == 'ProductGroup' and productData.hasVariant is defined and productData.hasVariant|length > 0 %}
+        {% set kscpOffer = kscpIsGroup ? productData.hasVariant[0].offers : (productData.offers ?? null) %}
+
+        {% if kscpOffer is not null %}
+            {% set kscpShipping = (kscpOffer.shippingDetails ?? { '@type': 'OfferShippingDetails' })|merge({
+                '@type': 'OfferShippingDetails',
+                shippingRate: {
+                    '@type': 'MonetaryAmount',
+                    value: kscpShippingCost|round(2),
+                    currency: context.currency.isoCode
+                },
+                shippingDestination: {
+                    '@type': 'DefinedRegion',
+                    addressCountry: kscpCountry
+                }
+            }) %}
+
+            {% if kscpIsGroup %}
+                {% set kscpVariant = productData.hasVariant[0]|merge({ offers: kscpOffer|merge({ shippingDetails: kscpShipping }) }) %}
+                {% set productData = productData|merge({ hasVariant: [kscpVariant] }) %}
+            {% else %}
+                {% set productData = productData|merge({ offers: kscpOffer|merge({ shippingDetails: kscpShipping }) }) %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
