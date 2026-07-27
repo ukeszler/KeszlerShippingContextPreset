@@ -4,10 +4,9 @@
     JSON-LD counterpart of this plugin's buy-widget.html.twig shippingDetails microdata.
 
     Adds the weight-aware shipping rate (perItemShipping) and destination country to the offer's
-    OfferShippingDetails. The core json-ld-product template may already populate shippingDetails with
-    a deliveryTime handling-time; we merge into that node rather than replace it, so the result carries
-    both the rate and the delivery time. If none exists (AggregateOffer / no deliveryTime) we create
-    a fresh OfferShippingDetails.
+    OfferShippingDetails. Merges into the existing shippingDetails node (preserving whatever else is
+    there — e.g. the deliveryTime completed by KeszlerStructuredData). If none exists (AggregateOffer
+    / no deliveryTime) a fresh OfferShippingDetails is created.
 
     The offer lives at productData.offers for simple products and at productData.hasVariant[0].offers
     for variant products (ProductGroup) — both shapes are handled below.
