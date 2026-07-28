@@ -3,34 +3,48 @@
 {#
     JSON-LD counterpart of this plugin's buy-widget.html.twig shippingDetails microdata.
 
-    Adds the weight-aware shipping rate (perItemShipping) and destination country to the offer's
-    OfferShippingDetails. Merges into the existing shippingDetails node (preserving whatever else is
-    there — e.g. the deliveryTime completed by KeszlerStructuredData). If none exists (AggregateOffer
-    / no deliveryTime) a fresh OfferShippingDetails is created.
+    shippingDestination is STATIC (the configured delivery country) and does not depend on the cost
+    calculation, so it is emitted whenever a shippingDetails node exists (core adds one via
+    deliveryTime) or a rate is computable. This avoids the "shippingDestination missing" GSC warning
+    on out-of-stock products, where perItemShipping() returns null (closeout item is dropped from the
+    calc cart, so no rule-based shipping method matches) — in that case we still state the destination,
+    only the rate is omitted.
+
+    We do NOT create a lone shippingDetails node just for a destination: if a product has no
+    shippingDetails at all (no deliveryTime) and no computable rate, we add nothing.
 
     The offer lives at productData.offers for simple products and at productData.hasVariant[0].offers
     for variant products (ProductGroup) — both shapes are handled below.
 #}
 {% block page_product_detail_json_ld_script %}
-    {% set kscpShippingCost = perItemShipping(page.product, page.product.weight ?? 0) %}
-    {% if kscpShippingCost is not null %}
-        {% set kscpCountry = config('KeszlerShippingContextPreset.config.countryIso')|default('DE')|upper %}
-        {% set kscpIsGroup = productData['@type'] == 'ProductGroup' and productData.hasVariant is defined and productData.hasVariant|length > 0 %}
-        {% set kscpOffer = kscpIsGroup ? productData.hasVariant[0].offers : (productData.offers ?? null) %}
+    {% set kscpIsGroup = productData['@type'] == 'ProductGroup' and productData.hasVariant is defined and productData.hasVariant|length > 0 %}
+    {% set kscpOffer = kscpIsGroup ? productData.hasVariant[0].offers : (productData.offers ?? null) %}
 
-        {% if kscpOffer is not null %}
+    {% if kscpOffer is not null %}
+        {% set kscpShippingCost = perItemShipping(page.product, page.product.weight ?? 0) %}
+        {% set kscpHasShippingDetails = kscpOffer.shippingDetails is defined and kscpOffer.shippingDetails %}
+
+        {% if kscpHasShippingDetails or kscpShippingCost is not null %}
+            {% set kscpCountry = config('KeszlerShippingContextPreset.config.countryIso')|default('DE')|upper %}
+
+            {# destination is static → always present on the shippingDetails #}
             {% set kscpShipping = (kscpOffer.shippingDetails ?? { '@type': 'OfferShippingDetails' })|merge({
-                '@type': 'OfferShippingDetails',
-                shippingRate: {
-                    '@type': 'MonetaryAmount',
-                    value: kscpShippingCost|round(2),
-                    currency: context.currency.isoCode
-                },
                 shippingDestination: {
                     '@type': 'DefinedRegion',
                     addressCountry: kscpCountry
                 }
             }) %}
+
+            {# rate only when the calculation succeeds (omitted for out-of-stock, non-purchasable items) #}
+            {% if kscpShippingCost is not null %}
+                {% set kscpShipping = kscpShipping|merge({
+                    shippingRate: {
+                        '@type': 'MonetaryAmount',
+                        value: kscpShippingCost|round(2),
+                        currency: context.currency.isoCode
+                    }
+                }) %}
+            {% endif %}
 
             {% if kscpIsGroup %}
                 {% set kscpVariant = productData.hasVariant[0]|merge({ offers: kscpOffer|merge({ shippingDetails: kscpShipping }) }) %}
